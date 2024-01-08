@@ -77,6 +77,7 @@ df$ride_len <- difftime(df$ended_at, df$started_at, units = "secs")
 ```
 
 **36%** of the riders are `casual` while the remaining **64%** are members. If we look at the bar graph of total rides in the weekdays for `casual` and `member`, we can see that there is a tendency for `casual` riders to increase through the week to finally the maximum during weekends. For `member` riders however, weekdays seem to be more up their alley.
+
 ![Rider weekday](plots/rides_weekdays.png)
 <details>
   <summary>Click to see code</summary>
