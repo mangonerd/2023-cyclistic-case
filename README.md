@@ -9,8 +9,9 @@ This is the case study of Cyclistic for 2023 that was done as part of Google’s
 ## Table of Contents
 
 1.  [Introduction](#introduction)
-    1. [Setting up environment and importing data](#setting-up-environment-and-importing-data)
+    1. [importing data](#importing-data)
     2. [Exploring the Data](#exploring-the-data)
+2. [Analysis](#analysis)
 
 
 
@@ -26,7 +27,7 @@ Further studies can be done in the following areas:
 1. Tracking user IDs to find behavior patterns.
 2. Monitoring the effects of advertisements and making changes accordingly.
 
-### Setting up environment and importing data
+### Importing data
 The packages used are: `tidyverse`, and `scales`. Specifically `dplyr`, `ggplot2`, and `readr` was used from `tidyverse`. 
 Firstly, I downloaded the data (inside a subfolder named Data in the working directory) and imported it into Rstudio using the following code:
 ```{r import files}
@@ -39,11 +40,11 @@ This code automatically scans for all `.csv` files within the Data folder and co
 ### Exploring the data
 Now to get an idea about the data, we can use various functions:
 ``` {r getting an idea of the data}
-summary(df)
-colnames(df)
-colSums(is.na(df)) #how many NA values in each columns
-unique(df$rideable_type) #seeing unique values
-unique(df$member_casual)
+summary(df_ori)
+colnames(df_ori)
+colSums(is.na(df_ori)) #how many NA values in each columns
+unique(df_ori$rideable_type) #seeing unique values
+unique(df_ori$member_casual)
 ```
 Interestingly through my exploration, I found some observations where ride **Start Time** was greater than **End Time**, which basically means the ride ended even before it started. (😆)
 The case study is only about human users. So, these miraculous riders had to go.
@@ -51,7 +52,43 @@ The case study is only about human users. So, these miraculous riders had to go.
 df_pop <- filter(df_ori, started_at<ended_at)
 ```
 
-At this point, I created a sample 
+At this point, I created a sample for ease of analysis, especially for Tableau. The sample size is 200,000, which is much larger than the 16k that is required for this population to have a 99% Confidence level and 1% Margin of error.
+Code:
+```
+df <- sample_n(df_pop, 200000)
+```
+
+Writing a `.csv` file for Tableau with the sample:
+```
+write_csv(df, "2023_Cyclistic_Cleaned.csv")
+```
+
+## Analysis
+Now comes the fun part. Firstly, I created 2 new columns for calculating the weekday and the ride length.
+Code:
+```
+# Calculating the weekday of start date (started_at_weekday)
+df$started_at_weekday <- wday(df$started_at, label = TRUE, abbr = FALSE, week_start = 1)
+
+# Calculating the total ride time (ride_len)
+df$ride_len <- difftime(df$ended_at, df$started_at, units = "secs")
+```
+
+If we look at the bar graph of total rides in the weekdays for `casual` and `member`, we can see that there is a tendency for `casual` riders to increase through the week to finally the maximum during weekends. For `member` riders however, weekdays seem to be more up their alley.
+![Rider weekday](plots/rides_weekdays.png)
+<details>
+  <summary>Click to see code</summary>
+  
+```{r generating rides weekdays}
+df %>% 
+  ggplot() +
+  geom_bar(aes(started_at_weekday, fill = member_casual))+
+  facet_wrap(~member_casual)+
+  scale_y_continuous(labels = unit_format(unit = "K", scale = 1e-3))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(x = "Weekday", y = "Count of Rides", fill = "User Type")
+```
+</details>
 
 
 Here is a histogram of the ride length. The scale is in log10, and the data was filtered to discard outliers.
@@ -59,7 +96,6 @@ Here is a histogram of the ride length. The scale is in log10, and the data was 
 ![Ride Length](plots/ride_length.png)
 <details>
   <summary>Click to see code</summary>
-  
 ```{r generating histogram of ride length}
  df %>%
   filter(ride_len < 10000 & ride_len > 60) %>% # Filtering out extremes
@@ -73,7 +109,11 @@ Here is a histogram of the ride length. The scale is in log10, and the data was 
 ```
 </details>
 
-As we can see from the histogram, the ride length is more or less the same among the users, albeit the 
+As we can see from the histogram, the ride length is more or less the same among the users, albeit the casual riders seem to ride for longer, possibly because they focus on enjoying the ride as a recreational activity.
+
+With all this context, we need to as 2 simple questions to make sure our ads are having the most effect. **Where?** and **When?**. I turn to Tableau to answer these questions: [Tableau Dashboard](https://public.tableau.com/shared/J554PR5P6)
+
+From the tableau dashboard, we can see the hotspot of the riders, where they tend to start and where they tend to get off. Moreover, we can see which time in what day of the week they go for rides. Since we established earlier 
 
 
 
