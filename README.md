@@ -22,7 +22,7 @@ Further studies can be done in the following areas:
 ## Table of Contents
 
 1.  [Introduction](#introduction)
-    1. [importing data](#importing-data)
+    1. [Importing data](#importing-data)
     2. [Exploring the Data](#exploring-the-data)
 2. [Analysis](#analysis)
 3. [Conlusion](#conclusion)
@@ -128,7 +128,7 @@ From the tableau dashboard, we can see the hotspot of the riders, where they ten
 ![Tableau Dashboard](plots/tableau_dash.jpeg)
 
 Moreover, we can see which time in what day of the week they go for rides. Since we established earlier that the ride length is only around 11 minutes, using either the starting time or ending time should lead to the same result.
-The area and time with more density should be targeted. For weekends, the afternoon should be targeted, and for weekdays, around 5PM is ideal— both scenarios are for targeting `casual` riders.
+The area and time with more density should be targeted. For weekends, the afternoon should be targeted, and for weekdays, around 5PM is ideal—both scenarios are for targeting `casual` riders.
 
 # Conclusion
 So, targeting the casual riders during afternoons of weekends, and commuting time during weekdays is the best approach to have the most reach among our target audience. This can be done through digital ads, posters, banners etc. Exact channel needs to be determined after further study of the target group.
