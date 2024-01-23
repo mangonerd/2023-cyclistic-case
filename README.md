@@ -106,6 +106,7 @@ Here is a histogram of the ride length. The scale is in log10, and the data was 
 ![Ride Length](plots/ride_length.png)
 <details>
   <summary>Click to see code</summary>
+    
 ```{r generating histogram of ride length}
  df %>%
   filter(ride_len < 10000 & ride_len > 60) %>% # Filtering out extremes
